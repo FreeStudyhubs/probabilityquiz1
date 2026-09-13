@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Quiz #1 Practice — Basic Probability | FreeStudyhubs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0B1F3A;
+    --navy-deep:#071426;
+    --teal:#20B2AA;
+    --teal-light:#6EE2D6;
+    --off-white:#F0F4F7;
+    --ink:#112236;
+    --gray:#AAB6C2;
+    --panel:#132E4E;
+    --wrong:#E2596B;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--navy);
+    color:var(--off-white);
+    font-family:'DM Sans', sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  header{
+    width:100%;
+    background:var(--navy-deep);
+    padding:18px 24px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .logo-mark{
+    width:22px;height:22px;position:relative;flex-shrink:0;
+  }
+  .logo-mark::before{
+    content:"";
+    position:absolute; left:9px; top:10px; width:4px; height:12px;
+    background:var(--teal);
+  }
+  .logo-mark::after{
+    content:"";
+    position:absolute; left:0; top:0; width:0; height:0;
+    border-left:11px solid transparent;
+    border-right:11px solid transparent;
+    border-bottom:16px solid var(--teal-light);
+  }
+  .brand-text{line-height:1.2;}
+  .brand-text .name{font-weight:700; font-size:16px;}
+  .brand-text .tag{font-size:12px; color:var(--gray); font-style:italic;}
+
+  main{
+    width:100%;
+    max-width:640px;
+    padding:36px 20px 60px;
+    flex:1;
+  }
+
+  .eyebrow{
+    font-family:'DM Sans', sans-serif;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:0.03em;
+    color:var(--teal-light);
+    margin-bottom:6px;
+  }
+  h1{
+    font-family:'Source Serif 4', serif;
+    font-weight:600;
+    font-size:30px;
+    margin:0 0 6px;
+    color:#fff;
+  }
+  .subhead{
+    color:var(--gray);
+    font-size:15px;
+    margin-bottom:28px;
+    max-width:56ch;
+  }
+
+  .progress-row{
+    display:flex;
+    gap:6px;
+    margin-bottom:28px;
+  }
+  .progress-dot{
+    flex:1;
+    height:5px;
+    border-radius:3px;
+    background:rgba(255,255,255,0.14);
+    transition:background .3s ease;
+  }
+  .progress-dot.done{background:var(--teal);}
+  .progress-dot.current{background:var(--teal-light);}
+
+  .card{
+    background:var(--off-white);
+    color:var(--ink);
+    border-radius:16px;
+    padding:28px 26px;
+    margin-bottom:20px;
+  }
+  .card .tag{
+    display:inline-block;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.02em;
+    color:var(--navy-deep);
+    background:var(--teal-light);
+    padding:4px 12px;
+    border-radius:999px;
+    margin-bottom:16px;
+  }
+  .question-text{
+    font-family:'Source Serif 4', serif;
+    font-size:20px;
+    line-height:1.5;
+    margin:0;
+  }
+
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:22px;
+  }
+  .option{
+    text-align:left;
+    background:var(--panel);
+    color:#fff;
+    border:2px solid rgba(255,255,255,0.08);
+    border-radius:12px;
+    padding:14px 18px;
+    font-family:'DM Sans', sans-serif;
+    font-size:16px;
+    cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .option:hover:not(:disabled){border-color:var(--teal);}
+  .option .letter{
+    font-weight:700;
+    color:var(--teal-light);
+    min-width:18px;
+  }
+  .option:disabled{cursor:default;}
+  .option.correct{background:#154A3E; border-color:var(--teal);}
+  .option.incorrect{background:#4A1F27; border-color:var(--wrong);}
+  .option.reveal-correct{border-color:var(--teal);}
+
+  .feedback{
+    margin-top:18px;
+    padding:16px 18px;
+    border-radius:12px;
+    background:var(--panel);
+    display:none;
+  }
+  .feedback.show{display:block;}
+  .feedback .verdict{
+    font-weight:700;
+    font-size:16px;
+    margin-bottom:10px;
+  }
+  .feedback.is-correct .verdict{color:var(--teal-light);}
+  .feedback.is-wrong .verdict{color:var(--wrong);}
+  .feedback ol{
+    margin:0; padding-left:20px; color:var(--gray); font-size:15px; line-height:1.7;
+  }
+  .feedback ol li::marker{color:var(--teal-light);}
+
+  .actions{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:22px;
+  }
+  button.primary{
+    background:var(--teal);
+    color:var(--navy-deep);
+    border:none;
+    font-family:'DM Sans', sans-serif;
+    font-weight:700;
+    font-size:15px;
+    padding:12px 26px;
+    border-radius:10px;
+    cursor:pointer;
+  }
+  button.primary:disabled{
+    background:rgba(32,178,170,0.3);
+    color:rgba(7,20,38,0.5);
+    cursor:not-allowed;
+  }
+  button.primary:hover:not(:disabled){background:var(--teal-light);}
+
+  /* Results screen */
+  .results{
+    display:none;
+    text-align:center;
+    padding:40px 20px;
+  }
+  .results.show{display:block;}
+  .score-num{
+    font-family:'Source Serif 4', serif;
+    font-size:64px;
+    font-weight:700;
+    color:var(--teal-light);
+    margin:10px 0 4px;
+  }
+  .score-label{color:var(--gray); font-size:15px; margin-bottom:28px;}
+  .results-msg{font-size:16px; margin-bottom:32px; color:#fff; max-width:48ch; margin-left:auto; margin-right:auto;}
+  .retry-btn{
+    background:transparent;
+    border:2px solid var(--teal);
+    color:var(--teal-light);
+    font-family:'DM Sans', sans-serif;
+    font-weight:700;
+    padding:12px 28px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:15px;
+  }
+  .retry-btn:hover{background:rgba(32,178,170,0.1);}
+
+  #quiz-screen{display:block;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark"></div>
+  <div class="brand-text">
+    <div class="name">FreeStudyhubs</div>
+    <div class="tag">Learn Free. Go Further.</div>
+  </div>
+</header>
+
+<main>
+  <div id="quiz-screen">
+    <div class="eyebrow">MINI QUIZ #1 — REINFORCEMENT PRACTICE</div>
+    <h1>Basic Probability</h1>
+    <p class="subhead">The same 8 questions from Mini Quiz #1, now interactive. Pick an answer, check your work, and read the full solution before moving on.</p>
+
+    <div class="progress-row" id="progress-row"></div>
+
+    <div class="card">
+      <span class="tag" id="q-tag">BASIC PROBABILITY</span>
+      <p class="question-text" id="q-text"></p>
+      <div class="options" id="options"></div>
+
+      <div class="feedback" id="feedback">
+        <div class="verdict" id="verdict"></div>
+        <ol id="steps"></ol>
+      </div>
+
+      <div class="actions">
+        <button class="primary" id="next-btn" disabled>Check Answer</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="results" id="results-screen">
+    <div class="eyebrow">MINI QUIZ #1 — COMPLETE</div>
+    <div class="score-num" id="score-num">0/8</div>
+    <div class="score-label">questions correct</div>
+    <p class="results-msg" id="results-msg"></p>
+    <button class="retry-btn" id="retry-btn">Try Again</button>
+  </div>
+</main>
+
+<script>
+const QUESTIONS = [{"tag": "BASIC PROBABILITY", "question": "A bag contains 5 red marbles, 3 blue marbles, and 2 green marbles. If one marble is drawn at random, what is the probability that it is red?", "choices": ["1", "3/10", "1/2", "6/11", "1/5"], "correct": 2, "steps": ["Total marbles = 5 + 3 + 2 = 10.", "Number of red marbles = 5.", "P(red) = 5/10 = 1/2."]}, {"tag": "BASIC PROBABILITY", "question": "A bag contains 7 red marbles, 4 blue marbles, and 1 green marbles. If one marble is drawn at random, what is the probability that it is blue?", "choices": ["2/3", "7/12", "1/12", "1/2", "1/3"], "correct": 4, "steps": ["Total marbles = 7 + 4 + 1 = 12.", "Number of blue marbles = 4.", "P(blue) = 4/12 = 1/3."]}, {"tag": "BASIC PROBABILITY", "question": "A bag contains 6 red marbles, 6 blue marbles, and 3 green marbles. If one marble is drawn at random, what is the probability that it is green?", "choices": ["1/4", "4/5", "1/5", "2/5", "3/17"], "correct": 2, "steps": ["Total marbles = 6 + 6 + 3 = 15.", "Number of green marbles = 3.", "P(green) = 3/15 = 1/5."]}, {"tag": "BASIC PROBABILITY", "question": "A bag contains 8 red marbles, 2 blue marbles, and 5 green marbles. If one marble is drawn at random, what is the probability that it is red?", "choices": ["8/15", "2/15", "8/7", "7/15", "1/3"], "correct": 0, "steps": ["Total marbles = 8 + 2 + 5 = 15.", "Number of red marbles = 8.", "P(red) = 8/15 = 8/15."]}, {"tag": "BASIC PROBABILITY", "question": "A bag contains 4 red marbles, 9 blue marbles, and 2 green marbles. If one marble is drawn at random, what is the probability that it is blue?", "choices": ["3/5", "2/15", "2/5", "3/2", "4/15"], "correct": 0, "steps": ["Total marbles = 4 + 9 + 2 = 15.", "Number of blue marbles = 9.", "P(blue) = 9/15 = 3/5."]}, {"tag": "BASIC PROBABILITY", "question": "A bag contains 10 red marbles, 3 blue marbles, and 7 green marbles. If one marble is drawn at random, what is the probability that it is green?", "choices": ["1/2", "13/20", "3/20", "7/20", "7/13"], "correct": 3, "steps": ["Total marbles = 10 + 3 + 7 = 20.", "Number of green marbles = 7.", "P(green) = 7/20 = 7/20."]}, {"tag": "BASIC PROBABILITY", "question": "A bag contains 5 red marbles, 5 blue marbles, and 5 green marbles. If one marble is drawn at random, what is the probability that it is red?", "choices": ["2/3", "1/3", "1/2", "3/8", "5/17"], "correct": 1, "steps": ["Total marbles = 5 + 5 + 5 = 15.", "Number of red marbles = 5.", "P(red) = 5/15 = 1/3."]}, {"tag": "BASIC PROBABILITY", "question": "A bag contains 9 red marbles, 4 blue marbles, and 3 green marbles. If one marble is drawn at random, what is the probability that it is blue?", "choices": ["3/4", "1/3", "3/16", "1/4", "9/16"], "correct": 3, "steps": ["Total marbles = 9 + 4 + 3 = 16.", "Number of blue marbles = 4.", "P(blue) = 4/16 = 1/4."]}];
+
+let current = 0;
+let selected = null;
+let answered = false;
+let score = 0;
+const results = new Array(QUESTIONS.length).fill(null);
+
+const progressRow = document.getElementById('progress-row');
+const qTag = document.getElementById('q-tag');
+const qText = document.getElementById('q-text');
+const optionsEl = document.getElementById('options');
+const feedbackEl = document.getElementById('feedback');
+const verdictEl = document.getElementById('verdict');
+const stepsEl = document.getElementById('steps');
+const nextBtn = document.getElementById('next-btn');
+const quizScreen = document.getElementById('quiz-screen');
+const resultsScreen = document.getElementById('results-screen');
+const scoreNum = document.getElementById('score-num');
+const resultsMsg = document.getElementById('results-msg');
+const retryBtn = document.getElementById('retry-btn');
+
+const LETTERS = ['A','B','C','D','E'];
+
+function buildProgress(){
+  progressRow.innerHTML = '';
+  QUESTIONS.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'progress-dot';
+    if (results[i] !== null) dot.classList.add('done');
+    else if (i === current) dot.classList.add('current');
+    progressRow.appendChild(dot);
+  });
+}
+
+function renderQuestion(){
+  answered = false;
+  selected = null;
+  const q = QUESTIONS[current];
+  qTag.textContent = q.tag;
+  qText.textContent = q.question;
+  optionsEl.innerHTML = '';
+  feedbackEl.classList.remove('show','is-correct','is-wrong');
+  nextBtn.textContent = 'Check Answer';
+  nextBtn.disabled = true;
+
+  q.choices.forEach((choice, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="letter">${LETTERS[i]}</span><span>${choice}</span>`;
+    btn.addEventListener('click', () => selectOption(i));
+    optionsEl.appendChild(btn);
+  });
+
+  buildProgress();
+}
+
+function selectOption(i){
+  if (answered) return;
+  selected = i;
+  [...optionsEl.children].forEach((btn, idx) => {
+    btn.style.borderColor = idx === i ? 'var(--teal)' : 'rgba(255,255,255,0.08)';
+  });
+  nextBtn.disabled = false;
+}
+
+function checkAnswer(){
+  const q = QUESTIONS[current];
+  answered = true;
+  const isCorrect = selected === q.correct;
+  results[current] = isCorrect;
+  if (isCorrect) score++;
+
+  [...optionsEl.children].forEach((btn, idx) => {
+    btn.disabled = true;
+    if (idx === q.correct) btn.classList.add('correct');
+    else if (idx === selected) btn.classList.add('incorrect');
+  });
+
+  feedbackEl.classList.add('show', isCorrect ? 'is-correct' : 'is-wrong');
+  verdictEl.textContent = isCorrect ? "Correct!" : `Not quite — the correct answer is ${LETTERS[q.correct]}.`;
+  stepsEl.innerHTML = '';
+  q.steps.forEach(s => {
+    const li = document.createElement('li');
+    li.textContent = s;
+    stepsEl.appendChild(li);
+  });
+
+  nextBtn.textContent = current === QUESTIONS.length - 1 ? 'See Results' : 'Next Question';
+  buildProgress();
+}
+
+function goNext(){
+  if (!answered){
+    checkAnswer();
+    return;
+  }
+  if (current < QUESTIONS.length - 1){
+    current++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function showResults(){
+  quizScreen.style.display = 'none';
+  resultsScreen.classList.add('show');
+  scoreNum.textContent = `${score}/${QUESTIONS.length}`;
+  let msg;
+  if (score === QUESTIONS.length) msg = "Perfect score! You've got basic probability locked in — ready for the next mini quiz.";
+  else if (score >= QUESTIONS.length * 0.75) msg = "Strong work. Review the ones you missed, then you're ready to move on.";
+  else if (score >= QUESTIONS.length * 0.5) msg = "Good start. Go back over the missed questions before jumping into Mini Quiz #2.";
+  else msg = "Probability takes practice. Re-read the solution steps above, then try this set again.";
+  resultsMsg.textContent = msg;
+}
+
+function retry(){
+  current = 0;
+  score = 0;
+  results.fill(null);
+  quizScreen.style.display = 'block';
+  resultsScreen.classList.remove('show');
+  renderQuestion();
+}
+
+nextBtn.addEventListener('click', goNext);
+retryBtn.addEventListener('click', retry);
+
+renderQuestion();
+</script>
+
+</body>
+</html>
